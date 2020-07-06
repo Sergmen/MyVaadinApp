@@ -15,8 +15,7 @@ public class Router extends UI {
 
 
     Navigator navigator;
-    public static final String MAINVIEW = "";
-    public static final String PATIENTVIEW = "patient";
+    public static final String PATIENTVIEW = "";
     public static final String DOCTORVIEW = "doctor";
     public static final String RECIPEVIEW = "recipe";
 
@@ -31,7 +30,6 @@ public class Router extends UI {
 
         Navigator.ComponentContainerViewDisplay viewDisplay = new Navigator.ComponentContainerViewDisplay(layout);
         navigator = new Navigator(UI.getCurrent(), viewDisplay);
-        navigator.addView("", new MainView());
         navigator.addView(PATIENTVIEW, new PatientView());
         navigator.addView(DOCTORVIEW, new DoctorView());
         navigator.addView(RECIPEVIEW, new RecipeView());

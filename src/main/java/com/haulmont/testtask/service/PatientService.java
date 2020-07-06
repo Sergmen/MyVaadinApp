@@ -4,9 +4,7 @@ import com.haulmont.testtask.common.ProjectSessionManager;
 import com.haulmont.testtask.entities.PatientEntity;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,9 +14,7 @@ public class PatientService {
 
     private static PatientService instance;
     private static final Logger LOGGER = Logger.getLogger(PatientService.class.getName());
-
-    private final HashMap<Long, PatientEntity> patients = new HashMap<>();
-    private long nextId = 0;
+    private Session session = ProjectSessionManager.getSession();
 
     private PatientService() {
     }
@@ -35,25 +31,9 @@ public class PatientService {
      * @return all available PatientEntity objects.
      */
     public synchronized List<PatientEntity> findAll() {
-        Session session = ProjectSessionManager.getSession();
-        ArrayList<PatientEntity> patients = (ArrayList<PatientEntity>) session.createNamedQuery("findAll").getResultList();
+        ArrayList<PatientEntity> patients = (ArrayList<PatientEntity>) session.createNamedQuery("findAllPatients").getResultList();
         return  patients;
     }
-
-    /**
-     * Finds all Customer's that match given filter.
-     *
-     * @param stringFilter
-     *            filter that returned objects should match or null/empty string
-     *            if all objects should be returned.
-     * @return list a Customer objects
-     */
-    public synchronized List<PatientEntity> findByName(String stringFilter) {
-        Session session = ProjectSessionManager.getSession();
-        List<PatientEntity> patients = session.createNamedQuery("findByName").setParameter("name",stringFilter).getResultList();
-        return patients;
-    }
-
 
 
     /**
@@ -65,7 +45,6 @@ public class PatientService {
     public synchronized void delete(PatientEntity patient) throws Exception {
 
         try {
-            Session session = ProjectSessionManager.getSession();
             Transaction tx = session.getTransaction();
             tx.begin();
             session.remove(patient);
@@ -90,7 +69,6 @@ public class PatientService {
             return;
         }
         try {
-            Session session = ProjectSessionManager.getSession();
             Transaction tx = session.getTransaction();
             tx.begin();
             session.saveOrUpdate(patient);

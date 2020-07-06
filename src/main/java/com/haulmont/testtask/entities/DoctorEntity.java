@@ -15,7 +15,7 @@ import java.util.Set;
 @Builder(toBuilder = true)
 @Entity(name = "Doctor")
 @Table(name = "doctor")
-//@NamedQuery(name = "findAll ", query="select d from Doctor d")
+@NamedQuery(name = "findAllDoctors", query="select d from Doctor d")
 public class DoctorEntity implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

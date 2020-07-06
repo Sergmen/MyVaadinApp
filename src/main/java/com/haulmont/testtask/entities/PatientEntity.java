@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder(toBuilder = true)
 @Entity(name = "Patient")
 @Table(name = "patient")
-@NamedQuery(name = "findAll", query="select p from Patient p")
+@NamedQuery(name = "findAllPatients", query="select p from Patient p")
 //@NamedQuery(name = "findByName", query="select p from Patient p where concat(p.name, ' ', p.surname, ' ', p.patronymic) like concat('%', :name, '%')")
 public class PatientEntity implements Serializable, Cloneable {
     @Id

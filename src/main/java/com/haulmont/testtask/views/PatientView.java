@@ -1,13 +1,13 @@
 package com.haulmont.testtask.views;
 
-import com.haulmont.testtask.Menu;
-import com.haulmont.testtask.PatientForm;
-import com.haulmont.testtask.Router;
+import com.haulmont.testtask.views.Froms.Menu;
+import com.haulmont.testtask.views.Froms.PatientForm;
 import com.haulmont.testtask.entities.PatientEntity;
 import com.haulmont.testtask.service.PatientService;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.NoSuchElementException;
 
@@ -26,10 +26,11 @@ public class PatientView extends VerticalLayout implements View {
     public PatientView() {
         setSizeFull();
         setSpacing(true);
+        label.setSizeFull();
+        label.setStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
+        label.addStyleName(ValoTheme.LABEL_H2);
         addComponent(label);
-        label.setStyleName(".v-align-center");
         addComponent(new Menu());
-
         HorizontalLayout main = new HorizontalLayout(patientGrid, form);
         main.setSizeFull();
         main.setExpandRatio(patientGrid, 1);
@@ -45,6 +46,10 @@ public class PatientView extends VerticalLayout implements View {
         form.setVisible(false);
         addComponent(main);
         addComponent(toolbar);
+
+
+
+
     }
 
     @Override
@@ -111,6 +116,7 @@ public class PatientView extends VerticalLayout implements View {
         setPatientGrid();
         patientGrid.setVisible(true);
    }
+
 
 
 }

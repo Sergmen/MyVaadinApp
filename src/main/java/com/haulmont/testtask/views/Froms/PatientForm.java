@@ -1,12 +1,10 @@
-package com.haulmont.testtask;
+package com.haulmont.testtask.views.Froms;
 import com.haulmont.testtask.common.Validators;
-import com.vaadin.data.Validator;
 import com.vaadin.data.validator.*;
 import com.haulmont.testtask.entities.PatientEntity;
 import com.haulmont.testtask.service.PatientService;
 import com.haulmont.testtask.views.PatientView;
 import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -38,27 +36,36 @@ public class PatientForm extends FormLayout {
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(KeyCode.ENTER);
 
-        binder.bindInstanceFields(this);
+       // binder.bindInstanceFields(this);
 
         setBinderValidators();
         save.addClickListener(e -> this.save());
         cancel.addClickListener(e -> this.cancel());
+
+//        this.addListener(new Window.CloseListener() {
+//            @Override
+//            public void windowClose(Window.CloseEvent closeEvent) {
+//               binder.
+//
+//            }
+//        });
+
     }
 
     private void setBinderValidators() {
         binder.forField(name)
                 .withValidator(Validators.textLenghtValidator)
-                .withValidator(new RegexpValidator("Имя должно состоять из русских букв!","^[А-Яа-я]+$'"))
+                .withValidator(new RegexpValidator("Имя должно состоять из русских букв!","^[А-Яа-я]+$"))
                 .bind(PatientEntity::getName,PatientEntity::setName);
 
         binder.forField(surname)
                 .withValidator(Validators.textLenghtValidator)
-                .withValidator(new RegexpValidator("Фамилия должна состоять из русских букв!","^[А-Яа-я]+$'"))
+                .withValidator(new RegexpValidator("Имя должно состоять из русских букв!","^[А-Яа-я]+$"))
                 .bind(PatientEntity::getSurname,PatientEntity::setSurname);
 
         binder.forField(patronymic)
                 .withValidator(Validators.textLenghtValidator)
-                .withValidator(new RegexpValidator("Отчество должно состоять из русских букв!","^[А-Яа-я]+$'"))
+                .withValidator(new RegexpValidator("Имя должно состоять из русских букв!","^[А-Яа-я]+$"))
                 .bind(PatientEntity::getPatronymic,PatientEntity::setPatronymic);
 
         binder.forField(phone)
