@@ -31,7 +31,7 @@ public class PatientForm extends FormLayout {
 
         setSizeUndefined();
         HorizontalLayout buttons = new HorizontalLayout(save, cancel);
-        addComponents(name, surname,patronymic, phone, buttons);
+        addComponents(surname,name,patronymic, phone, buttons);
 
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(KeyCode.ENTER);

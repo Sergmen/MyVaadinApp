@@ -1,11 +1,13 @@
 package com.haulmont.testtask.service;
 
 
+import com.haulmont.testtask.common.DoctorStatistics;
 import com.haulmont.testtask.common.ProjectSessionManager;
 import com.haulmont.testtask.entities.DoctorEntity;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,25 +34,26 @@ public class DoctorService {
         return  doctorsList;
     }
 
-    public synchronized Map<String,Integer> getDoctorStatistics() {
+    public synchronized List<DoctorStatistics> getDoctorStatistics() {
 
-        Map<String,Integer> doctorStatistics = new HashMap<>();
+        List<DoctorStatistics> statistics = new ArrayList<>();
         Query query = session.createNativeQuery(getSqlDoctorStatistics());
 
         try {
             List<Object[]> result = query.getResultList();
 
             for (Object[] el : result) {
-                String name = (String) ((el[0] != null) ? el[0] : null);;
-                Integer recipesNumber = (Integer) ((el[1] != null) ? el[1] : 0);
-                doctorStatistics.put(name, recipesNumber);
+                DoctorStatistics doctorStatistics = new DoctorStatistics();
+                doctorStatistics.setName((el[0] != null) ? (String)el[0] : null);
+                doctorStatistics.setRecipesNumber((el[1] != null) ? (BigInteger)el[1] : BigInteger.valueOf(0));
+                statistics.add(doctorStatistics);
             }
         }
         catch (Exception e){
-            LOGGER.log(Level.SEVERE,"Ошибка получения статистики по врачу:", e);
+            LOGGER.log(Level.SEVERE,"Ошибка получения статистики по врачу:", e.getMessage());
         }
 
-        return doctorStatistics;
+        return statistics;
     }
 
 
@@ -64,7 +67,7 @@ public class DoctorService {
             tx.commit();
         }
         catch (Exception e){
-            LOGGER.log(Level.SEVERE,"Ошибка удаления врача:", e);
+            LOGGER.log(Level.SEVERE,"Ошибка удаления врача:", e.getMessage());
             throw e;
         }
     }
@@ -91,10 +94,10 @@ public class DoctorService {
 
     private String getSqlDoctorStatistics(){
         return "Select \n" +
-                "             CONCAT(doc.name,doc.surname,CAST(doc.id as varchar(255))),\n" +
-                "             COUNT(*)\n" +
+                " CONCAT(doc.name,' ',doc.surname,'(',CAST(doc.id as varchar(255)),')')\n" +
+                ",COUNT(rec.id)\n" +
                 "FROM doctor AS doc\n" +
                 "LEFT JOIN recipe AS rec ON doc.id = rec.id\n" +
-                "GROUP BY CONCAT(doc.name,doc.surname,CAST(doc.id as varchar(255)))";
+                "GROUP BY CONCAT(doc.name,' ',doc.surname,'(',CAST(doc.id as varchar(255)),')')";
     }
 }

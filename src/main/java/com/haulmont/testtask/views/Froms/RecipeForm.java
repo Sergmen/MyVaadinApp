@@ -1,30 +1,43 @@
 package com.haulmont.testtask.views.Froms;
 
+import com.haulmont.testtask.common.Priority;
 import com.haulmont.testtask.common.Validators;
 import com.haulmont.testtask.entities.DoctorEntity;
+import com.haulmont.testtask.entities.PatientEntity;
+import com.haulmont.testtask.entities.RecipeEntity;
 import com.haulmont.testtask.service.DoctorService;
+import com.haulmont.testtask.service.RecipeService;
 import com.haulmont.testtask.views.DoctorView;
+import com.haulmont.testtask.views.RecipeView;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
-public class DoctorForm extends FormLayout {
-    private TextField name = new TextField("Имя");
-    private TextField surname = new TextField("Фамилия");
-    private TextField patronymic = new TextField("Отчество");
-    private TextField specialization = new TextField("Специализация");
-    private Button save = new Button("Сохранить");
-    private Button cancel = new Button("Отмена");
+import javax.persistence.*;
 
-    private DoctorService service = DoctorService.getInstance();
-    private DoctorEntity doctor;
-    private DoctorView doctorView;
-    private Binder<DoctorEntity> binder = new Binder<>(DoctorEntity.class);
+public class RecipeForm extends FormLayout {
+    private TextField description = new TextField("Описание");
+    private ComboBox<PatientEntity> patientEntity = new ComboBox<>("Пациент");
+    private ComboBox<DoctorEntity> doctorEntity = new ComboBox<>("Врач");
+    private DateField сreationDate = new DateField("Дата создания");
+    private DateField expirationDate = new DateField("Срок действия");
+    private ComboBox<Priority> priority = new ComboBox<>("Приоритет");
 
-    public DoctorForm(DoctorView doctorView) {
-        this.doctorView = doctorView;
+
+    private RecipeService service = RecipeService.getInstance();
+    private RecipeEntity recipeEntity;
+    private RecipeView recipeView;
+    private Binder<RecipeEntity> binder = new Binder<>(RecipeEntity.class);
+
+
+
+
+public RecipeForm(RecipeView recipeView) {
+        this.recipeView = recipeView;
 
         setSizeUndefined();
         HorizontalLayout buttons = new HorizontalLayout(save, cancel);
@@ -90,5 +103,25 @@ public class DoctorForm extends FormLayout {
             Notification.show("Введите корректные данные!");
         }
     }
-}
 
+    private void setSelectionsComponents(){
+        // List of Planet objects
+        List<Planet> planets = new ArrayList<>();
+        planets.add(new Planet("Mercury"));
+        planets.add(new Planet("Venus"));
+        planets.add(new Planet("Earth"));
+
+// Create a selection component
+        ComboBox<Planet> select = new ComboBox<>("My Select");
+
+// Add an items to the ComboBox
+        select.setItems(planets);
+
+        select.setItemCaptionGenerator(Planet::getName);
+
+// Select the first
+        select.setSelectedItem(planets.get(0));
+// or
+// select.setValue(planets.get(0));
+    }
+}

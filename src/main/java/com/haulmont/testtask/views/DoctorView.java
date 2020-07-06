@@ -1,5 +1,6 @@
 package com.haulmont.testtask.views;
 
+import com.haulmont.testtask.common.DoctorStatistics;
 import com.haulmont.testtask.entities.DoctorEntity;
 import com.haulmont.testtask.service.DoctorService;
 import com.haulmont.testtask.views.Froms.DoctorForm;
@@ -17,49 +18,54 @@ public class DoctorView extends VerticalLayout implements View {
     private DoctorService patientService  = DoctorService.getInstance();
     private DoctorForm form = new DoctorForm(this);
     private Grid<DoctorEntity> doctorGrid= new Grid<>(DoctorEntity.class);
+    private Grid<DoctorStatistics> doctorStat= new Grid<>(DoctorStatistics.class);
     private Label label  = new Label("Врачи");
     private HorizontalLayout toolbar = new HorizontalLayout();
-    private HorizontalLayout statistics = new HorizontalLayout();
+    private VerticalLayout statistics = new VerticalLayout();
     private Button addButton = new Button("Добавить");
     private Button editButton = new Button("Изменить");
     private Button deliteButton = new Button("Удалить");
     private Button statisticsButton = new Button("Статистика");
+    private Button okButton = new Button("OK");
 
     public DoctorView() {
         setSizeFull();
         setSpacing(true);
+
         label.setSizeFull();
         label.setStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
         label.addStyleName(ValoTheme.LABEL_H2);
-        addComponent(label);
-        addComponent(new Menu());
+
         HorizontalLayout main = new HorizontalLayout(doctorGrid, form, statistics);
         main.setSizeFull();
         main.setExpandRatio(doctorGrid, 1);
+
         doctorGrid.setColumns("name", "surname", "patronymic", "specialization", "id");
         doctorGrid.getColumn("name").setCaption("Имя");
         doctorGrid.getColumn("surname").setCaption("Фамилия");
         doctorGrid.getColumn("patronymic").setCaption("Отчество");
         doctorGrid.getColumn("specialization").setCaption("Специализация");
-
         doctorGrid.setSizeFull();
         setDoctorGrid();
+
         setToolbar();
+        setStatistics();
         form.setVisible(false);
-        statistics.setVisible(false);
-        addComponent(main);
-        addComponent(toolbar);
+        doctorGrid.setVisible(false);
+        addComponents(label, new Menu(),main, toolbar);
+
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        statistics.setVisible(false);
+        doctorGrid.setVisible(false);
         form.setVisible(false);
         setDoctorGridVisible();
         setToolbarVisible();
     }
 
     private void setToolbar(){
+
         addButton.addClickListener(e->{
             doctorGrid.setVisible(false);
             toolbar.setVisible(false);
@@ -105,10 +111,10 @@ public class DoctorView extends VerticalLayout implements View {
             statistics.setVisible(true);
             doctorGrid.setVisible(false);
             toolbar.setVisible(false);
-            Map<String, Integer> map = null;
+            List<DoctorStatistics> stat = null;
             try {
-                map = patientService.getDoctorStatistics();
-                setStatistics(map);
+                stat = patientService.getDoctorStatistics();
+                doctorStat.setItems(stat);;
             } catch (Exception e1) {
                 Notification.show("Ошибка получения статистики по врачам!");
                 statistics.setVisible(false);
@@ -117,8 +123,7 @@ public class DoctorView extends VerticalLayout implements View {
             }
         });
 
-
-        toolbar.addComponents(addButton,editButton,deliteButton);
+        toolbar.addComponents(addButton,editButton,deliteButton,statisticsButton);
     }
 
     public void setToolbarVisible(){
@@ -134,55 +139,20 @@ public class DoctorView extends VerticalLayout implements View {
         doctorGrid.setVisible(true);
     }
 
-    private void setStatistics(Map<String, Integer> map){
+    private void setStatistics(){
+        statistics.addComponents(doctorStat,okButton);
+        statistics.setVisible(false);
 
-        Table table = new Table("The Brightest Stars");
+        doctorStat.getColumn("name").setCaption("Врач(id)");
+        doctorStat.getColumn("recipesNumber").setCaption("Количество рецептов");
+        doctorStat.setSizeFull();
 
-// Define two columns for the built-in container
-        table.addContainerProperty("Name", String.class, null);
-        table.addContainerProperty("Mag",  Float.class, null);
+        okButton.addClickListener(e -> {
+            statistics.setVisible(false);
+            doctorGrid.setVisible(true);
+            toolbar.setVisible(true);
+        });
 
-// Add a row the hard way
-        Object newItemId = table.addItem();
-        Item row1 = table.getItem(newItemId);
-        row1.getItemProperty("Name").setValue("Sirius");
-        row1.getItemProperty("Mag").setValue(-1.46f);
-
-// Add a few other rows using shorthand addItem()
-        table.addItem(new Object[]{"Canopus",        -0.72f}, 2);
-        table.addItem(new Object[]{"Arcturus",       -0.04f}, 3);
-        table.addItem(new Object[]{"Alpha Centauri", -0.01f}, 4);
-
-// Show exactly the currently contained rows (items)
-        table.setPageLength(table.size());
-
-
-        Chart chart = new Chart(ChartType.BAR);
-        chart.setWidth("400px");
-        chart.setHeight("300px");
-
-
-        Configuration conf = chart.getConfiguration();
-        conf.setTitle("Статистика по врачам");
-
-
-        ListSeries series = new ListSeries();
-        series.setData(new ArrayList<>(map.values()));
-        conf.addSeries(series);
-
-
-        XAxis xaxis = new XAxis();
-        String[] array = (String[]) map.keySet().toArray();
-        xaxis.setCategories(array);
-        xaxis.setTitle("Врачи");
-        conf.addxAxis(xaxis);
-
-
-        YAxis yaxis = new YAxis();
-        yaxis.setTitle("Количество рецептов");
-        conf.addyAxis(yaxis);
-
-        statistics.addComponent(chart);
     }
 
 }

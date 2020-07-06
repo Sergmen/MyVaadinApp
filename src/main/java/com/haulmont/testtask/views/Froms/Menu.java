@@ -10,7 +10,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class Menu extends CustomComponent {
 
 	private Button patientButton = new Button("Пациенты");
-	private Button doctorButton = new Button("Доктора");
+	private Button doctorButton = new Button("Врачи");
 	private Button recipeButton = new Button("Рецепты");
 
 	public Menu() {
