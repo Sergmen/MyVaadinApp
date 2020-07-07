@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Builder(toBuilder = true)
 @Entity(name = "Recipe")
 @Table(name = "recipe")
-//@NamedQuery(name = "findAll ", query="select r from Recipe r")
+@NamedQuery(name = "findAllRecipes", query="select r from Recipe r")
 public class RecipeEntity implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -31,9 +31,6 @@ public class RecipeEntity implements Serializable, Cloneable {
     @ManyToOne(targetEntity = DoctorEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", referencedColumnName = "id", nullable = false)
     private DoctorEntity doctor;
-
-
-
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     @Column(name = "сreation_date", nullable = false)

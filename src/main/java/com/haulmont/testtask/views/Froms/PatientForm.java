@@ -15,9 +15,6 @@ public class PatientForm extends FormLayout {
     private TextField surname = new TextField("Фамилия");
     private TextField patronymic = new TextField("Отчество");
     private TextField phone = new TextField("Телефон");
-
-  //  private NativeSelect<CustomerStatus> status = new NativeSelect<>("Status");
-  //  private DateField birthdate = new DateField("Birthday");
     private Button save = new Button("Сохранить");
     private Button cancel = new Button("Отмена");
 
@@ -32,6 +29,7 @@ public class PatientForm extends FormLayout {
         setSizeUndefined();
         HorizontalLayout buttons = new HorizontalLayout(save, cancel);
         addComponents(surname,name,patronymic, phone, buttons);
+
 
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(KeyCode.ENTER);

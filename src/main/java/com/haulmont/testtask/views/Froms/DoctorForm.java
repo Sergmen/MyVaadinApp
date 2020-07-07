@@ -17,7 +17,6 @@ public class DoctorForm extends FormLayout {
     private TextField specialization = new TextField("Специализация");
     private Button save = new Button("Сохранить");
     private Button cancel = new Button("Отмена");
-
     private DoctorService service = DoctorService.getInstance();
     private DoctorEntity doctor;
     private DoctorView doctorView;
