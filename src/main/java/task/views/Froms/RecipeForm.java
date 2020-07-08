@@ -1,16 +1,14 @@
-package com.haulmont.testtask.views.Froms;
+package task.views.Froms;
 
-import com.haulmont.testtask.common.Priority;
-import com.haulmont.testtask.common.Validators;
-import com.haulmont.testtask.entities.DoctorEntity;
-import com.haulmont.testtask.entities.PatientEntity;
-import com.haulmont.testtask.entities.RecipeEntity;
-import com.haulmont.testtask.service.DoctorService;
-import com.haulmont.testtask.service.PatientService;
-import com.haulmont.testtask.service.RecipeService;
-import com.haulmont.testtask.views.RecipeView;
+import task.common.Priority;
+import task.entities.DoctorEntity;
+import task.entities.PatientEntity;
+import task.entities.RecipeEntity;
+import task.service.DoctorService;
+import task.service.PatientService;
+import task.service.RecipeService;
+import task.views.RecipeView;
 import com.vaadin.data.Binder;
-import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -35,10 +33,6 @@ public class RecipeForm extends FormLayout {
     private Button save = new Button("Сохранить");
     private Button cancel = new Button("Отмена");
 
-
-
-
-
     public RecipeForm(RecipeView recipeView) {
         this.recipeView = recipeView;
 
@@ -46,9 +40,9 @@ public class RecipeForm extends FormLayout {
         HorizontalLayout buttons = new HorizontalLayout(save, cancel);
         addComponents(description, patientField,doctorField, сreationDate, expirationDate, priority, buttons);
 
+
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        сreationDate.setData(java.time.LocalDate.now());
 
         setSelectionsComponents();
         setBinderValidators();
@@ -59,8 +53,7 @@ public class RecipeForm extends FormLayout {
 
     private void setBinderValidators() {
         binder.forField(description)
-                .withValidator(Validators.textLenghtValidator)
-                .withValidator(new RegexpValidator("Описание должно состоять из русских букв!","^[А-Яа-я]+$"))
+                .withValidator(value-> value != null, "Поле не может быть пустым!")
                 .bind(RecipeEntity::getDescription,RecipeEntity::setDescription);
 
         binder.forField(patientField)
@@ -73,13 +66,13 @@ public class RecipeForm extends FormLayout {
 
         binder.forField(сreationDate)
                 .withValidator(value-> value != null, "Поле не может быть пустым!")
-                .withConverter(value->new LocalDate(value.getYear(),value.getMonthValue(), value.getDayOfMonth()), modelValue->java.time.LocalDate.ofYearDay(modelValue.getYear(),modelValue.getDayOfYear()), "Введен неверный формат даты!")
+                .withConverter(value->value==null?null:new LocalDate(value.getYear(),value.getMonthValue(), value.getDayOfMonth()), modelValue->modelValue==null?null:java.time.LocalDate.ofYearDay(modelValue.getYear(),modelValue.getDayOfYear()), "Введен неверный формат даты!")
                 .bind(RecipeEntity::getСreationDate,RecipeEntity::setСreationDate);
 
         binder.forField(expirationDate)
                 .withValidator(value-> value != null, "Поле не может быть пустым!")
-                .withConverter(value->new LocalDate(value.getYear(),value.getMonthValue(), value.getDayOfMonth()), modelValue->java.time.LocalDate.ofYearDay(modelValue.getYear(),modelValue.getDayOfYear()), "Введен неверный формат даты!")
-                .withValidator(value-> value.compareTo(new LocalDate(сreationDate.getValue().getYear(),сreationDate.getValue().getMonthValue(),сreationDate.getValue().getDayOfMonth()))>0,"Срок действия рецепта не может быть раньше даты создания!")
+                .withValidator(value->сreationDate.getValue()==null?true:(value.compareTo(сreationDate.getValue())>0?true:false), "Срок действия рецепта не может быть раньше дата создания!" )
+                .withConverter(value->value==null?null:new LocalDate(value.getYear(),value.getMonthValue(), value.getDayOfMonth()), modelValue->modelValue==null?null:java.time.LocalDate.ofYearDay(modelValue.getYear(),modelValue.getDayOfYear()), "Введен неверный формат даты!")
                 .bind(RecipeEntity::getExpirationDate,RecipeEntity::setExpirationDate);
 
         binder.forField(priority)
@@ -97,6 +90,7 @@ public class RecipeForm extends FormLayout {
         setVisible(false);
         recipeView.setRecipeGridVisible();
         recipeView.setToolbarVisible();
+        recipeView.setFilterToolbarVisible();
     }
 
     private void save() {
@@ -110,6 +104,7 @@ public class RecipeForm extends FormLayout {
             setVisible(false);
             recipeView.setRecipeGridVisible();
             recipeView.setToolbarVisible();
+            recipeView.setFilterToolbarVisible();
         }
         else {
             Notification.show("Введите корректные данные!");
@@ -121,11 +116,11 @@ public class RecipeForm extends FormLayout {
         List<PatientEntity> patients = patientService.findAll();
 
         doctorField.setItems(doctors);
-        doctorField.setItemCaptionGenerator(DoctorEntity::getName);
+        doctorField.setItemCaptionGenerator(DoctorEntity::toString);
         doctorField.setSelectedItem(doctors.get(0));
 
         patientField.setItems(patients);
-        patientField.setItemCaptionGenerator(PatientEntity::getName);
+        patientField.setItemCaptionGenerator(PatientEntity::toString);
         patientField.setSelectedItem(patients.get(0));
 
 
@@ -137,5 +132,11 @@ public class RecipeForm extends FormLayout {
             }
         });
 
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        setSelectionsComponents();
     }
 }

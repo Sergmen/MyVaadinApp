@@ -1,7 +1,7 @@
-package com.haulmont.testtask.service;
+package task.service;
 
-import com.haulmont.testtask.common.ProjectSessionManager;
-import com.haulmont.testtask.entities.RecipeEntity;
+import task.common.ProjectSessionManager;
+import task.entities.RecipeEntity;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -43,7 +43,7 @@ public class RecipeService {
             tx.commit();
         }
         catch (Exception e){
-            LOGGER.log(Level.SEVERE,"Ошибка удаления рецепта:", e);
+            LOGGER.log(Level.SEVERE,"Ошибка удаления рецепта:", e.getStackTrace());
             throw e;
         }
     }
@@ -51,8 +51,7 @@ public class RecipeService {
 
     public synchronized void saveOrUpdate(RecipeEntity recipe) throws Exception{
         if (recipe == null) {
-            LOGGER.log(Level.SEVERE,
-                    "Заполните данные в рецепте");
+            LOGGER.log(Level.SEVERE,"Заполните данные в рецепте");
             return;
         }
         try {
@@ -60,9 +59,9 @@ public class RecipeService {
             tx.begin();
             session.saveOrUpdate(recipe);
             tx.commit();
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Ошибка сохранения/обновления рецепта", ex.getMessage());
-            throw ex;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Ошибка сохранения/обновления рецепта", e.getStackTrace());
+            throw e;
         }
     }
 

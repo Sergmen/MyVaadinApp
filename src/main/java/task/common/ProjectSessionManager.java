@@ -1,4 +1,4 @@
-package com.haulmont.testtask.common;
+package task.common;
 
 
 import org.hibernate.Session;

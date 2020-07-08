@@ -1,4 +1,4 @@
-package com.haulmont.testtask.common;
+package task.common;
 
 public enum Priority {
  Normal, Cito, Statim

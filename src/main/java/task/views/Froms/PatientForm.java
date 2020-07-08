@@ -1,9 +1,9 @@
-package com.haulmont.testtask.views.Froms;
-import com.haulmont.testtask.common.Validators;
+package task.views.Froms;
+import task.common.Validators;
 import com.vaadin.data.validator.*;
-import com.haulmont.testtask.entities.PatientEntity;
-import com.haulmont.testtask.service.PatientService;
-import com.haulmont.testtask.views.PatientView;
+import task.entities.PatientEntity;
+import task.service.PatientService;
+import task.views.PatientView;
 import com.vaadin.data.Binder;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.*;
@@ -34,19 +34,10 @@ public class PatientForm extends FormLayout {
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(KeyCode.ENTER);
 
-       // binder.bindInstanceFields(this);
-
         setBinderValidators();
         save.addClickListener(e -> this.save());
         cancel.addClickListener(e -> this.cancel());
 
-//        this.addListener(new Window.CloseListener() {
-//            @Override
-//            public void windowClose(Window.CloseEvent closeEvent) {
-//               binder.
-//
-//            }
-//        });
 
     }
 

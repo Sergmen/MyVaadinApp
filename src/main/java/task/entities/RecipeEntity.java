@@ -1,6 +1,6 @@
-package com.haulmont.testtask.entities;
+package task.entities;
 
-import com.haulmont.testtask.common.Priority;
+import task.common.Priority;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;

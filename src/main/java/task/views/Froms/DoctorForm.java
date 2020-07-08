@@ -1,9 +1,9 @@
-package com.haulmont.testtask.views.Froms;
+package task.views.Froms;
 
-import com.haulmont.testtask.common.Validators;
-import com.haulmont.testtask.entities.DoctorEntity;
-import com.haulmont.testtask.service.DoctorService;
-import com.haulmont.testtask.views.DoctorView;
+import task.common.Validators;
+import task.entities.DoctorEntity;
+import task.service.DoctorService;
+import task.views.DoctorView;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutAction;

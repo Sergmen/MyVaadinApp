@@ -1,16 +1,17 @@
-package com.haulmont.testtask.views;
+package task.views;
 
-import com.haulmont.testtask.common.DoctorStatistics;
-import com.haulmont.testtask.entities.DoctorEntity;
-import com.haulmont.testtask.service.DoctorService;
-import com.haulmont.testtask.views.Froms.DoctorForm;
-import com.haulmont.testtask.views.Froms.Menu;
+import task.common.DoctorStatistics;
+import task.entities.DoctorEntity;
+import task.service.DoctorService;
+import task.views.Froms.DoctorForm;
+import task.views.Froms.Menu;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
+
 import java.util.*;
 
 public class DoctorView extends VerticalLayout implements View {
@@ -39,8 +40,9 @@ public class DoctorView extends VerticalLayout implements View {
         HorizontalLayout main = new HorizontalLayout(doctorGrid, form, statistics);
         main.setSizeFull();
         main.setExpandRatio(doctorGrid, 1);
+        form.setSizeFull();
 
-        doctorGrid.setColumns("name", "surname", "patronymic", "specialization", "id");
+        doctorGrid.setColumns("surname","name", "patronymic", "specialization", "id");
         doctorGrid.getColumn("name").setCaption("Имя");
         doctorGrid.getColumn("surname").setCaption("Фамилия");
         doctorGrid.getColumn("patronymic").setCaption("Отчество");
@@ -58,10 +60,10 @@ public class DoctorView extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        doctorGrid.setVisible(false);
         form.setVisible(false);
         setDoctorGridVisible();
         setToolbarVisible();
+        setStatistics();
     }
 
     private void setToolbar(){
@@ -100,8 +102,13 @@ public class DoctorView extends VerticalLayout implements View {
             if (doctorEntity!=null) {
                 try {
                     patientService.delete(doctorEntity);
-                } catch (Exception e1) {
-                    Notification.show("Ошибка удаления врача!");
+                } catch (Exception ex) {
+                    if (doctorEntity.getRecipes().size()>0) {
+                        Notification.show("Ошибка удаления врача! Этот врач выписывал рецепты!" );
+                    }
+                    else {
+                        Notification.show("Ошибка удаления врача!");
+                    }
                 }
                 setDoctorGrid();
             }
@@ -142,6 +149,7 @@ public class DoctorView extends VerticalLayout implements View {
     private void setStatistics(){
         statistics.addComponents(doctorStat,okButton);
         statistics.setVisible(false);
+        statistics.setSizeFull();
 
         doctorStat.getColumn("name").setCaption("Врач(id)");
         doctorStat.getColumn("recipesNumber").setCaption("Количество рецептов");

@@ -7,9 +7,9 @@
     <persistence-unit name="PersistenceCore">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>com.haulmont.testtask.entities.DoctorEntity</class>
-        <class>com.haulmont.testtask.entities.PatientEntity</class>
-        <class>com.haulmont.testtask.entities.RecipeEntity</class>
+        <class>task.entities.DoctorEntity</class>
+        <class>task.entities.PatientEntity</class>
+        <class>task.entities.RecipeEntity</class>
 
 
         <properties>

@@ -1,11 +1,12 @@
-package com.haulmont.testtask.service;
+package task.service;
 
 
-import com.haulmont.testtask.common.DoctorStatistics;
-import com.haulmont.testtask.common.ProjectSessionManager;
-import com.haulmont.testtask.entities.DoctorEntity;
+import task.common.DoctorStatistics;
+import task.common.ProjectSessionManager;
+import task.entities.DoctorEntity;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.*;
@@ -50,7 +51,7 @@ public class DoctorService {
             }
         }
         catch (Exception e){
-            LOGGER.log(Level.SEVERE,"Ошибка получения статистики по врачу:", e.getMessage());
+            LOGGER.log(Level.SEVERE,"Ошибка получения статистики по врачу:", e.getStackTrace());
         }
 
         return statistics;
@@ -59,7 +60,6 @@ public class DoctorService {
 
 
     public synchronized void delete(DoctorEntity doctor) throws Exception {
-
         try {
             Transaction tx = session.getTransaction();
             tx.begin();
@@ -67,16 +67,22 @@ public class DoctorService {
             tx.commit();
         }
         catch (Exception e){
-            LOGGER.log(Level.SEVERE,"Ошибка удаления врача:", e.getMessage());
-            throw e;
+            if (doctor.getRecipes().size()>0) {
+                LOGGER.log(Level.SEVERE, "Ошибка удаления! Этот врач выписывал рецепты!");
+                throw new Exception("Этот врач выписывал рецепты!");
+            }
+            else {
+                LOGGER.log(Level.SEVERE, "Ошибка удаления врача!", e.getStackTrace());
+                throw e;
+            }
+
         }
     }
 
 
     public synchronized void saveOrUpdate(DoctorEntity doctor) throws Exception{
         if (doctor == null) {
-            LOGGER.log(Level.SEVERE,
-                    "Заполните данные врача");
+            LOGGER.log(Level.SEVERE, "Заполните данные врача");
             return;
         }
         try {
@@ -84,20 +90,19 @@ public class DoctorService {
             tx.begin();
             session.saveOrUpdate(doctor);
             tx.commit();
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE,
-                    "Ошибка сохранения/обновления врача");
-            throw ex;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE,"Ошибка сохранения/обновления врача", e.getStackTrace());
+            throw e;
         }
     }
 
 
     private String getSqlDoctorStatistics(){
         return "Select \n" +
-                " CONCAT(doc.name,' ',doc.surname,'(',CAST(doc.id as varchar(255)),')')\n" +
+                " CONCAT(doc.surname,' ',doc.name,'(',CAST(doc.id as varchar(255)),')')\n" +
                 ",COUNT(rec.id)\n" +
                 "FROM doctor AS doc\n" +
-                "LEFT JOIN recipe AS rec ON doc.id = rec.id\n" +
-                "GROUP BY CONCAT(doc.name,' ',doc.surname,'(',CAST(doc.id as varchar(255)),')')";
+                "LEFT JOIN recipe AS rec ON doc.id = rec.doctor_id\n" +
+                "GROUP BY CONCAT(doc.surname,' ',doc.name,'(',CAST(doc.id as varchar(255)),')')";
     }
 }

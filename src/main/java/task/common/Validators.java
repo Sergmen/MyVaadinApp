@@ -1,7 +1,5 @@
-package com.haulmont.testtask.common;
+package task.common;
 
-import com.haulmont.testtask.entities.DoctorEntity;
-import com.haulmont.testtask.entities.PatientEntity;
 import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
@@ -24,6 +22,9 @@ public class Validators {
             }
         }
     } ;
+
+
+
 
 
 

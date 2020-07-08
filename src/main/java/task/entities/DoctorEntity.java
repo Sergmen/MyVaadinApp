@@ -1,4 +1,4 @@
-package com.haulmont.testtask.entities;
+package task.entities;
 
 import lombok.*;
 import lombok.Builder;
@@ -35,6 +35,11 @@ public class DoctorEntity implements Serializable, Cloneable {
 
     @OneToMany(mappedBy = "doctor")
     private Set<RecipeEntity> recipes = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s(%d)",surname,name,patronymic,id);
+    }
 
 }
 

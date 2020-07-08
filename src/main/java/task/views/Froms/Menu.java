@@ -1,10 +1,9 @@
-package com.haulmont.testtask.views.Froms;
+package task.views.Froms;
 
-import com.haulmont.testtask.Router;
+import task.Router;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
 
 public class Menu extends CustomComponent {
