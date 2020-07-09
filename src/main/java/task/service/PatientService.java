@@ -48,7 +48,6 @@ public class PatientService {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Ошибка удаления пациента!", e);
             throw e;
-
         }
     }
 

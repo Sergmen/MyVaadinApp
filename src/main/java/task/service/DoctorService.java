@@ -67,16 +67,9 @@ public class DoctorService {
             tx.commit();
         }
         catch (Exception e){
-            if (doctor.getRecipes().size()>0) {
-                LOGGER.log(Level.SEVERE, "Ошибка удаления! Этот врач выписывал рецепты!");
-                throw new Exception("Этот врач выписывал рецепты!");
-            }
-            else {
-                LOGGER.log(Level.SEVERE, "Ошибка удаления врача!", e.getStackTrace());
+                LOGGER.log(Level.SEVERE, "Ошибка удаления врача!", e);
                 throw e;
             }
-
-        }
     }
 
 

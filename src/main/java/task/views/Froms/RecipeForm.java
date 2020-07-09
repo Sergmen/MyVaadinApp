@@ -1,6 +1,7 @@
 package task.views.Froms;
 
 import task.common.Priority;
+import task.common.Validators;
 import task.entities.DoctorEntity;
 import task.entities.PatientEntity;
 import task.entities.RecipeEntity;
@@ -16,14 +17,17 @@ import org.joda.time.LocalDate;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static task.common.Validators.textLenghtValidator;
 
 public class RecipeForm extends FormLayout {
     private TextField description = new TextField("Описание");
     private ComboBox<PatientEntity> patientField = new ComboBox<>("Пациент");
     private ComboBox<DoctorEntity> doctorField = new ComboBox<>("Врач");
+    private ComboBox<Priority> priority = new ComboBox<>("Приоритет");
     private DateField сreationDate = new DateField("Дата создания");
     private DateField expirationDate = new DateField("Срок действия");
-    private ComboBox<Priority> priority = new ComboBox<>("Приоритет");
     private RecipeService service = RecipeService.getInstance();
     private DoctorService doctorService = DoctorService.getInstance();
     private PatientService patientService = PatientService.getInstance();
@@ -53,7 +57,7 @@ public class RecipeForm extends FormLayout {
 
     private void setBinderValidators() {
         binder.forField(description)
-                .withValidator(value-> value != null, "Поле не может быть пустым!")
+                .withValidator(Validators.textLenghtValidator)
                 .bind(RecipeEntity::getDescription,RecipeEntity::setDescription);
 
         binder.forField(patientField)
@@ -71,7 +75,7 @@ public class RecipeForm extends FormLayout {
 
         binder.forField(expirationDate)
                 .withValidator(value-> value != null, "Поле не может быть пустым!")
-                .withValidator(value->сreationDate.getValue()==null?true:(value.compareTo(сreationDate.getValue())>0?true:false), "Срок действия рецепта не может быть раньше дата создания!" )
+                .withValidator(value->сreationDate.getValue()==null?true:(value.compareTo(сreationDate.getValue())>=0?true:false), "Срок действия рецепта не может быть раньше дата создания!" )
                 .withConverter(value->value==null?null:new LocalDate(value.getYear(),value.getMonthValue(), value.getDayOfMonth()), modelValue->modelValue==null?null:java.time.LocalDate.ofYearDay(modelValue.getYear(),modelValue.getDayOfYear()), "Введен неверный формат даты!")
                 .bind(RecipeEntity::getExpirationDate,RecipeEntity::setExpirationDate);
 
@@ -84,6 +88,7 @@ public class RecipeForm extends FormLayout {
     public void setRecipe(RecipeEntity recipe) {
         this.recipe = recipe;
         binder.setBean(recipe);
+        setSelectionsComponents();
     }
 
     private void cancel() {
@@ -107,7 +112,8 @@ public class RecipeForm extends FormLayout {
             recipeView.setFilterToolbarVisible();
         }
         else {
-            Notification.show("Введите корректные данные!");
+
+            Notification.show("Введите корректные данные! "+ binder.validate().getValidationErrors().stream().map(e->e.getErrorMessage()).collect(Collectors.toList()));
         }
     }
 
@@ -117,26 +123,21 @@ public class RecipeForm extends FormLayout {
 
         doctorField.setItems(doctors);
         doctorField.setItemCaptionGenerator(DoctorEntity::toString);
-        doctorField.setSelectedItem(doctors.get(0));
+
 
         patientField.setItems(patients);
         patientField.setItemCaptionGenerator(PatientEntity::toString);
-        patientField.setSelectedItem(patients.get(0));
 
 
         priority.setItems(Priority.values());
         priority.setItemCaptionGenerator(new ItemCaptionGenerator<Priority>() {
             @Override
             public String apply(Priority priority) {
-                return priority.name();
+                return priority.toString();
             }
         });
-
+        priority.clear();
     }
 
-    @Override
-    public void setVisible(boolean visible) {
-        super.setVisible(visible);
-        setSelectionsComponents();
-    }
+
 }

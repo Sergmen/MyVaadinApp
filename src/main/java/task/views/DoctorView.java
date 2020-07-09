@@ -23,6 +23,7 @@ public class DoctorView extends VerticalLayout implements View {
     private Label label  = new Label("Врачи");
     private HorizontalLayout toolbar = new HorizontalLayout();
     private VerticalLayout statistics = new VerticalLayout();
+    private HorizontalLayout main = new HorizontalLayout(doctorGrid, form, statistics);
     private Button addButton = new Button("Добавить");
     private Button editButton = new Button("Изменить");
     private Button deliteButton = new Button("Удалить");
@@ -32,16 +33,41 @@ public class DoctorView extends VerticalLayout implements View {
     public DoctorView() {
         setSizeFull();
         setSpacing(true);
+        setLabel();
+        setMain();
+        setMainVisible(ViewType.Grid);
+        setToolBar();
+        toolbar.setVisible(true);
+        addComponents(label,new Menu(),main,toolbar);
+    }
 
-        label.setSizeFull();
-        label.setStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
-        label.addStyleName(ValoTheme.LABEL_H2);
 
-        HorizontalLayout main = new HorizontalLayout(doctorGrid, form, statistics);
+    private void setMainVisible(ViewType viewType) {
+
+        switch (viewType) {
+            case Grid:
+                doctorGrid.setVisible(true);
+                form.setVisible(false);
+                statistics.setVisible(false);
+                return;
+            case Form:
+                doctorGrid.setVisible(false);
+                form.setVisible(true);
+                statistics.setVisible(false);
+                return;
+            case Statistics:
+                doctorGrid.setVisible(false);
+                form.setVisible(false);
+                statistics.setVisible(true);
+                return;
+        }
+
+    }
+
+    private void setMain() {
         main.setSizeFull();
         main.setExpandRatio(doctorGrid, 1);
         form.setSizeFull();
-
         doctorGrid.setColumns("surname","name", "patronymic", "specialization", "id");
         doctorGrid.getColumn("name").setCaption("Имя");
         doctorGrid.getColumn("surname").setCaption("Фамилия");
@@ -49,29 +75,28 @@ public class DoctorView extends VerticalLayout implements View {
         doctorGrid.getColumn("specialization").setCaption("Специализация");
         doctorGrid.setSizeFull();
         setDoctorGrid();
-
-        setToolbar();
         setStatistics();
-        form.setVisible(false);
-        doctorGrid.setVisible(false);
-        addComponents(label, new Menu(),main, toolbar);
+    }
 
+    private void setLabel() {
+        label.setSizeFull();
+        label.setStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
+        label.addStyleName(ValoTheme.LABEL_H2);
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        form.setVisible(false);
-        setDoctorGridVisible();
-        setToolbarVisible();
+        setMainVisible(ViewType.Grid);
+        toolbar.setVisible(true);
+        setDoctorGrid();
         setStatistics();
     }
 
-    private void setToolbar(){
+    private void setToolBar(){
 
         addButton.addClickListener(e->{
-            doctorGrid.setVisible(false);
             toolbar.setVisible(false);
-            form.setVisible(true);
+            setMainVisible(ViewType.Form);
             form.setDoctor(new DoctorEntity());
         });
         editButton.addClickListener(e->{
@@ -84,9 +109,8 @@ public class DoctorView extends VerticalLayout implements View {
                 doctorEntity = null;
             }
             if (doctorEntity!=null) {
-                doctorGrid.setVisible(false);
                 toolbar.setVisible(false);
-                form.setVisible(true);
+                setMainVisible(ViewType.Form);
                 form.setDoctor(doctorEntity);
             }
         });
@@ -103,31 +127,25 @@ public class DoctorView extends VerticalLayout implements View {
                 try {
                     patientService.delete(doctorEntity);
                 } catch (Exception ex) {
-                    if (doctorEntity.getRecipes().size()>0) {
-                        Notification.show("Ошибка удаления врача! Этот врач выписывал рецепты!" );
-                    }
-                    else {
-                        Notification.show("Ошибка удаления врача!");
-                    }
+                   Notification.show("Ошибка удаления врача!" );
                 }
                 setDoctorGrid();
             }
         });
 
         statisticsButton.addClickListener(e -> {
-            statistics.setVisible(true);
-            doctorGrid.setVisible(false);
             toolbar.setVisible(false);
+            setMainVisible(ViewType.Statistics);
             List<DoctorStatistics> stat = null;
             try {
                 stat = patientService.getDoctorStatistics();
-                doctorStat.setItems(stat);;
+                doctorStat.setItems(stat);
             } catch (Exception e1) {
                 Notification.show("Ошибка получения статистики по врачам!");
-                statistics.setVisible(false);
-                doctorGrid.setVisible(true);
                 toolbar.setVisible(true);
+                setMainVisible(ViewType.Grid);
             }
+
         });
 
         toolbar.addComponents(addButton,editButton,deliteButton,statisticsButton);
@@ -143,7 +161,7 @@ public class DoctorView extends VerticalLayout implements View {
     }
     public void setDoctorGridVisible() {
         setDoctorGrid();
-        doctorGrid.setVisible(true);
+        setMainVisible(ViewType.Grid);
     }
 
     private void setStatistics(){
@@ -156,11 +174,15 @@ public class DoctorView extends VerticalLayout implements View {
         doctorStat.setSizeFull();
 
         okButton.addClickListener(e -> {
-            statistics.setVisible(false);
-            doctorGrid.setVisible(true);
+            setMainVisible(ViewType.Grid);
             toolbar.setVisible(true);
         });
 
     }
+
+    private enum ViewType {
+        Grid, Form, Statistics
+    }
+
 
 }

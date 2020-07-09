@@ -29,14 +29,14 @@ public class PatientView extends VerticalLayout implements View {
         setSpacing(true);
         setLabel();
         setMain();
-        setMainVisible(true);
+        setGridFormVisible(true);
         setToolBar();
         toolbar.setVisible(true);
         addComponents(label,new Menu(),main,toolbar);
     }
 
 
-    private void setMainVisible(boolean patientGridVisible) {
+    private void setGridFormVisible(boolean patientGridVisible) {
         if (patientGridVisible) {
             patientGrid.setVisible(true);
             form.setVisible(false);
@@ -50,8 +50,7 @@ public class PatientView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setMain();
-        setMainVisible(true);
-        setToolBar();
+        setGridFormVisible(true);
         toolbar.setVisible(true);
     }
 
@@ -76,7 +75,7 @@ public class PatientView extends VerticalLayout implements View {
 
     private void setToolBar(){
         addButton.addClickListener(e->{
-            setMainVisible(false);
+            setGridFormVisible(false);
             toolbar.setVisible(false);
             form.setPatient(new PatientEntity());
         });
@@ -90,7 +89,7 @@ public class PatientView extends VerticalLayout implements View {
                 patientEntity = null;
             }
             if (patientEntity!=null) {
-                setMainVisible(false);
+                setGridFormVisible(false);
                 toolbar.setVisible(false);
                 form.setPatient(patientEntity);
             }
@@ -109,13 +108,7 @@ public class PatientView extends VerticalLayout implements View {
                 try {
                     patientService.delete(patientEntity);
                 } catch (Exception ex) {
-
-                    if (patientEntity.getRecipes().size()>0) {
-                        Notification.show("Ошибка удаления пациента! Этот пациент получал рецепты!" );
-                    }
-                    else {
-                        Notification.show("Ошибка удаления пациента!");
-                    }
+                        Notification.show("Ошибка удаления пациента!" );
                 }
                 setPatientGrid();
             }
@@ -135,7 +128,5 @@ public class PatientView extends VerticalLayout implements View {
         setPatientGrid();
         patientGrid.setVisible(true);
    }
-
-
 
 }
