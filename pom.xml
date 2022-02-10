@@ -20,7 +20,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<vaadin.widgetset.mode>local</vaadin.widgetset.mode>
-		<hibernate.version>5.4.2.Final</hibernate.version>
+		<hibernate.version>5.4.24.Final</hibernate.version>
 		<hsql.version>2.4.0</hsql.version>
 
 	</properties>
